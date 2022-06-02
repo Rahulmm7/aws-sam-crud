@@ -1,0 +1,95 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  first-app
+
+  Sample SAM Template for first-app
+
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: services/
+      Handler: getUser.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        getUser:
+          Type: Api
+          Properties:
+            Path: /getUser
+            Method: GET
+
+  CreateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: services/
+      Handler: createUser.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        createUSer:
+          Type: Api
+          Properties:
+            Path: /createUser
+            Method: POST
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref usersTable
+
+  GetAllUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: services/
+      Handler: getAllUser.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        createUser:
+          Type: Api
+          Properties:
+            Path: /getAllUser
+            Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref usersTable
+  DeleteUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: services/
+      Handler: deleteUser.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        deleteUser:
+          Type: Api
+          Properties:
+            Path: /deleteUser
+            Method: DELETE
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref usersTable
+
+  usersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: userDB
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE

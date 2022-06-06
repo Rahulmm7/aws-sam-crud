@@ -9,9 +9,7 @@ exports.handler = async (event) => {
             id: userId
         }
     };
-
-    const results = await docClinet.getItem(params).promise()
-
+    const results = await docClinet.getItem(params).promise();
     return {
         statusCode: 200,
         headers: {},

@@ -2,9 +2,7 @@ const { v4 } = require('uuid');
 const dynamodb = require('aws-sdk/clients/dynamodb');
 const docClinet = new dynamodb.DocumentClient();
 
-
 exports.handler = async (event) => {
-
     try {
         const user = JSON.parse(event.body);
 
@@ -16,8 +14,8 @@ exports.handler = async (event) => {
                 email: user.email,
                 password: user.password,
             },
-
         }
+
         const data = await docClinet.put(params).promise();
         const response = {
             'statusCode': 200,

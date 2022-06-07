@@ -2,16 +2,15 @@
 const dynamodb = require('aws-sdk/clients/dynamodb');
 const docClinet = new dynamodb.DocumentClient()
 
-
 exports.handler = async (event) => {
     try {
         const params = {
             TableName: 'userDB',
             Key: {
-                // id: event.pathParameters.id
-                id: '21'
+                id: event.pathParameters.id
             }
         }
+
         const data = await docClinet.delete(params).promise()
         response = {
             'statusCode': 200,
@@ -22,6 +21,5 @@ exports.handler = async (event) => {
     } catch (error) {
         console.log(error)
         return error
-
     }
 }

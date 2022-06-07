@@ -1,0 +1,7 @@
+{
+    "name": "getAllUser",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "Rahul M M",
+    "dependencies": {}
+}

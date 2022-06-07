@@ -22,8 +22,11 @@ Resources:
         getUser:
           Type: Api
           Properties:
-            Path: /getUser
+            Path: /getUser/{id}
             Method: GET
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref usersTable
 
   CreateUserFunction:
     Type: AWS::Serverless::Function
@@ -60,6 +63,23 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref usersTable
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/updateUser
+      Handler: index.handler
+      Runtime: nodejs14.x
+      Architectures:
+        - x86_64
+      Events:
+        createUser:
+          Type: Api
+          Properties:
+            Path: /updateUser/{id}
+            Method: PUT
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref usersTable
   DeleteUserFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -72,7 +92,7 @@ Resources:
         deleteUser:
           Type: Api
           Properties:
-            Path: /deleteUser
+            Path: /deleteUser/{id}
             Method: DELETE
       Policies:
         - DynamoDBCrudPolicy:

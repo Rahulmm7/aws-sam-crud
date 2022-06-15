@@ -3,5 +3,18 @@ node_modules
 
 .aws-sam
 
+lambda
+./lambda
+
 package-lock.json
 
+samconfig.toml
+
+
+# But descend into directories
+!*/node_modules
+# Recursively allow files under subtree
+# !//**
+# # You can be specific with these rules
+# !/some/other/deep/path/**
+# !.gitignore 

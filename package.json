@@ -1,9 +1,0 @@
-{
-  "name": "AWS_SAM_CRUD_App",
-  "version": "1.0.0",
-  "description": "Crud app boiler plate",
-  "author": "Rahul M M",
-  "dependencies": {
-    "aws-sdk": "^2.1145.0"
-  }
-}

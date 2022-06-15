@@ -2,10 +2,12 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "sample-rest"
-s3_bucket = "rahul455"
-s3_prefix = "sample-rest"
+stack_name = "rahul88new"
+s3_bucket = "rahul225"
+s3_prefix = "rahul88new"
 region = "ap-south-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
+parameter_overrides = "StageName=\"Dev\""
+disable_rollback = true

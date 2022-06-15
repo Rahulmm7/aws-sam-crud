@@ -5,12 +5,26 @@ Description: >
 
   Sample SAM Template for first-app
 
+Parameters:
+  StageName:
+    Type: String
+    Default: Dev
+
 Globals:
   Function:
     Timeout: 5
 
 Resources:
-  GetUserFunction:
+  ApiGatewayCrud:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref StageName
+      Name: CrudApi
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'*'"
+
+  GetUser:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambda/getUser
@@ -22,76 +36,101 @@ Resources:
         getUser:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayCrud
             Path: /getUser/{id}
             Method: GET
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref usersTable
 
-  CreateUserFunction:
+  LambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs14.x
+      ContentUri: ./layers
+
+  CreateUser:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: CreateUser
       CodeUri: lambda/createUser
       Handler: index.handler
       Runtime: nodejs14.x
+      Layers:
+        - !Ref LambdaLayer
       Architectures:
         - x86_64
       Events:
         createUSer:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayCrud
             Path: /createUser
             Method: POST
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref usersTable
 
-  GetAllUserFunction:
+  GetAllUser:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: GetAllUser
       CodeUri: lambda/getAllUser
       Handler: index.handler
       Runtime: nodejs14.x
+      Layers:
+        - !Ref LambdaLayer
       Architectures:
         - x86_64
       Events:
         createUser:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayCrud
             Path: /getAllUser
             Method: GET
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref usersTable
-  UpdateUserFunction:
+
+  UpdateUser:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: UpdateUser
       CodeUri: lambda/updateUser
       Handler: index.handler
       Runtime: nodejs14.x
+      Layers:
+        - !Ref LambdaLayer
       Architectures:
         - x86_64
       Events:
         createUser:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayCrud
             Path: /updateUser/{id}
             Method: PUT
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref usersTable
-  DeleteUserFunction:
+  DeleteUser:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: DeleteUser
       CodeUri: lambda/deleteUser
       Handler: index.handler
       Runtime: nodejs14.x
+      Layers:
+        - !Ref LambdaLayer
       Architectures:
         - x86_64
       Events:
         deleteUser:
           Type: Api
           Properties:
+            RestApiId: !Ref ApiGatewayCrud
             Path: /deleteUser/{id}
             Method: DELETE
       Policies:
@@ -113,3 +152,11 @@ Resources:
         WriteCapacityUnits: 5
       StreamSpecification:
         StreamViewType: NEW_IMAGE
+
+Outputs:
+  ApiOutput:
+    Description: "api url"
+    Value: !Sub "https://${ApiGatewayCrud}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  LayerOutput:
+    # Value: !Ref LambdaLayer
+    Value: !Sub "${LambdaLayer}"
